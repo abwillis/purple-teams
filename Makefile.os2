@@ -37,14 +37,14 @@ OBJECTS = $(SOURCES:.c=.o)
 
 all: $(TARGET)
 
-$(TARGET): $(OBJECTS)
-	$(CC) $(LDFLAGS) -o $@ $(OBJECTS) $(LIBS)
+$(TARGET): $(OBJECTS) teams.def
+	$(CC) $(LDFLAGS) -o $@ $(OBJECTS) teams.def $(LIBS)
 
 personal: between
 	$(MAKE) CFLAGS="$(CFLAGS) -DENABLE_TEAMS_PERSONAL" -f Makefile.os2 $(PERSONAL_TARGET)
 
-$(PERSONAL_TARGET): $(OBJECTS)
-	$(CC) $(LDFLAGS) -o $@ $(OBJECTS) $(LIBS)
+$(PERSONAL_TARGET): $(OBJECTS) teamsp.def
+	$(CC) $(LDFLAGS) -o $@ $(OBJECTS) teamsp.def $(LIBS)
 
 .c.o:
 	$(CC) $(CFLAGS) -c $< -o $@
