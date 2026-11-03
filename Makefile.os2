@@ -1,0 +1,54 @@
+#
+# Makefile.os2 - OS/2 build for purple-teams
+#
+# Assumptions:
+#   - GCC / EMX-compatible kLIBC toolchain
+#   - libpurple 2 headers are already in the include path
+#   - libpurple 2 libraries are already in the library path
+#   - GLib, JSON-GLib and zlib are likewise available to the toolchain
+#
+
+CC      = gcc
+CFLAGS  = -O2 -Wall -Wno-unused-parameter -Wno-sign-compare
+CFLAGS += -Ipurple2compat
+LDFLAGS = -Zdll
+
+LIBS = -lpurple -ljson-glib-1.0 -lgobject-2.0 -lglib-2.0 -lz
+
+TARGET          = teams.dll
+PERSONAL_TARGET = teamsp.dll
+
+SOURCES = \
+	teams_connection.c \
+	teams_contacts.c \
+	teams_login.c \
+	teams_messages.c \
+	teams_util.c \
+	purple-websocket.c \
+	teams_trouter.c \
+	teams_cards.c \
+	markdown.c \
+	libteams.c \
+	purple2compat/http.c \
+	purple2compat/purple-socket.c
+
+OBJECTS = $(SOURCES:.c=.o)
+
+all: $(TARGET)
+
+$(TARGET): $(OBJECTS)
+	$(CC) $(LDFLAGS) -o $@ $(OBJECTS) $(LIBS)
+
+personal: clean
+	$(MAKE) CFLAGS="$(CFLAGS) -DENABLE_TEAMS_PERSONAL" $(PERSONAL_TARGET)
+
+$(PERSONAL_TARGET): $(OBJECTS)
+	$(CC) $(LDFLAGS) -o $@ $(OBJECTS) $(LIBS)
+
+.c.o:
+	$(CC) $(CFLAGS) -c $< -o $@
+
+clean:
+	rm -f $(OBJECTS) $(TARGET) $(PERSONAL_TARGET)
+
+.PHONY: all personal clean
