@@ -4,6 +4,7 @@
 
 CC         = gcc
 PKG_CONFIG = pkg-config
+MAKE       = make
 
 PKGS = purple glib-2.0 gobject-2.0 json-glib-1.0
 
@@ -11,7 +12,7 @@ CFLAGS = -O2 -Wall -Wno-unused-parameter -Wno-sign-compare
 CFLAGS += -Ipurple2compat
 CFLAGS += $(shell $(PKG_CONFIG) --cflags $(PKGS))
 
-LDFLAGS = -Zdll
+LDFLAGS = -Zdll -Zomf -Zmt
 
 LIBS = $(shell $(PKG_CONFIG) --libs $(PKGS)) -lz
 
@@ -39,8 +40,8 @@ all: $(TARGET)
 $(TARGET): $(OBJECTS)
 	$(CC) $(LDFLAGS) -o $@ $(OBJECTS) $(LIBS)
 
-personal: clean
-	$(MAKE) CFLAGS="$(CFLAGS) -DENABLE_TEAMS_PERSONAL" $(PERSONAL_TARGET)
+personal: between
+	$(MAKE) CFLAGS="$(CFLAGS) -DENABLE_TEAMS_PERSONAL" -f Makefile.os2 $(PERSONAL_TARGET)
 
 $(PERSONAL_TARGET): $(OBJECTS)
 	$(CC) $(LDFLAGS) -o $@ $(OBJECTS) $(LIBS)
@@ -48,6 +49,8 @@ $(PERSONAL_TARGET): $(OBJECTS)
 .c.o:
 	$(CC) $(CFLAGS) -c $< -o $@
 
+between:
+	rm -f *.o
 clean:
 	rm -f $(OBJECTS) $(TARGET) $(PERSONAL_TARGET)
 
