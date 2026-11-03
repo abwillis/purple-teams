@@ -1,0 +1,3 @@
+LIBRARY teams
+DESCRIPTION 'Microsoft Teams protocol plugin for libpurple'
+EXPORTS purple_init_plugin
