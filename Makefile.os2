@@ -1,19 +1,19 @@
 #
 # Makefile.os2 - OS/2 build for purple-teams
 #
-# Assumptions:
-#   - GCC / EMX-compatible kLIBC toolchain
-#   - libpurple 2 headers are already in the include path
-#   - libpurple 2 libraries are already in the library path
-#   - GLib, JSON-GLib and zlib are likewise available to the toolchain
-#
 
-CC      = gcc
-CFLAGS  = -O2 -Wall -Wno-unused-parameter -Wno-sign-compare
+CC         = gcc
+PKG_CONFIG = pkg-config
+
+PKGS = purple glib-2.0 gobject-2.0 json-glib-1.0
+
+CFLAGS = -O2 -Wall -Wno-unused-parameter -Wno-sign-compare
 CFLAGS += -Ipurple2compat
+CFLAGS += $(shell $(PKG_CONFIG) --cflags $(PKGS))
+
 LDFLAGS = -Zdll
 
-LIBS = -lpurple -ljson-glib-1.0 -lgobject-2.0 -lglib-2.0 -lz
+LIBS = $(shell $(PKG_CONFIG) --libs $(PKGS)) -lz
 
 TARGET          = teams.dll
 PERSONAL_TARGET = teamsp.dll
